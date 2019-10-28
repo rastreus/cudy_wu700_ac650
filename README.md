@@ -1,7 +1,11 @@
-# rtl8821CU
-[![Build Status](https://travis-ci.org/whitebatman2/rtl8821CU.svg?branch=master)](https://travis-ci.org/whitebatman2/rtl8821CU)
+# Cudy WU700 AC650 USB WIFI ADAPTER
 
-Drivers for rtl8811CU and rtl8821CU Wi-Fi chipsets. This repository is based on soruce code found on a CD shipped with a rtl8811CU based card. It's updated to build on newer kernel versions.
+This are the drivers for Cudy WIFI adapter (rtl8811CU) which was unfortunately shipped with the wrong drivers (88x2BU).
+This repository was forked from whitebatman2's [one](https://github.com/whitebatman2/rtl8821CU) and some modification were added here and there to have it work on new kernels (kernel 5.2 confirm operation).
+
+Modifications are from cilynx's RTS88x2BU [driver](https://github.com/cilynx/rtl88x2bu) which was installed due to incorrect assumption of the correct RTL driver, all thanks to him.
+
+Here are the original instructions:
 
 ## Build and install with DKMS
 
