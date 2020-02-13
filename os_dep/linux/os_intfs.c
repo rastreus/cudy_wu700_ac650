@@ -1239,6 +1239,19 @@ u16 rtw_recv_select_queue(struct sk_buff *skb)
 }
 
 #endif
+
+static u8 is_rtw_ndev(struct net_device *ndev)
+{
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
+	return ndev->netdev_ops
+		&& ndev->netdev_ops->ndo_do_ioctl
+		&& ndev->netdev_ops->ndo_do_ioctl == rtw_ioctl;
+#else
+	return ndev->do_ioctl
+		&& ndev->do_ioctl == rtw_ioctl;
+#endif
+}
+
 static int rtw_ndev_notifier_call(struct notifier_block *nb, unsigned long state, void *ptr)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 11, 0))
@@ -1246,6 +1259,7 @@ static int rtw_ndev_notifier_call(struct notifier_block *nb, unsigned long state
 #else
 	struct net_device *dev = ptr;
 #endif
+	_adapter *adapter;
 
 	if (dev == NULL)
 		return NOTIFY_DONE;
@@ -1266,11 +1280,18 @@ static int rtw_ndev_notifier_call(struct notifier_block *nb, unsigned long state
 #endif
 		return NOTIFY_DONE;
 
+	adapter = rtw_netdev_priv(dev);
+
+	if (!is_rtw_ndev(dev))
+		return NOTIFY_DONE;
+
 	RTW_INFO(FUNC_NDEV_FMT" state:%lu\n", FUNC_NDEV_ARG(dev), state);
 
 	switch (state) {
 	case NETDEV_CHANGENAME:
 		rtw_adapter_proc_replace(dev);
+		strncpy(adapter->old_ifname, dev->name, IFNAMSIZ);
+		adapter->old_ifname[IFNAMSIZ-1] = 0;
 		break;
 	}
 
